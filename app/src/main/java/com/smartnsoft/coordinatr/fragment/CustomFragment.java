@@ -19,11 +19,9 @@ import coordinatr.smartnsoft.com.coordinatr.R;
  * @author Raphael Kiffer
  * @since 2015.12.24
  */
-public class MainFragment
+public class CustomFragment
     extends Fragment
 {
-
-  private CollapsingToolbarLayout collapsingToolbarLayout;
 
   private Toolbar toolbar;
 
@@ -34,14 +32,12 @@ public class MainFragment
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
   {
-    final View view = inflater.inflate(R.layout.main_fragment, container, false);
+    final View view = inflater.inflate(R.layout.custom_fragment, container, false);
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+    toolbar.setTitle(R.string.coordinatorCustom);
     final AppCompatActivity activity = (AppCompatActivity) getActivity();
     activity.setSupportActionBar(toolbar);
-
-    collapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.collapsingToolbarLayout);
-    collapsingToolbarLayout.setTitle(getString(R.string.coordinatorDefault));
 
     textView = (TextView) view.findViewById(R.id.textView);
     textView.setText(getString(R.string.assembleSpace, getString(R.string.lipsum), getString(R.string.lipsum), getString(R.string.lipsum), getString(R.string.lipsum)));
@@ -53,7 +49,7 @@ public class MainFragment
       public void onClick(View view)
       {
         final FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainer, new CustomFragment());
+        transaction.replace(R.id.fragmentContainer, new MainFragment());
         transaction.commit();
       }
     });
