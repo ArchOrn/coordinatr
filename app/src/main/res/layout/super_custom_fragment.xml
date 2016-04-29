@@ -6,7 +6,7 @@
   android:layout_height="match_parent"
   android:background="@android:color/white"
 >
-  <android.support.design.widget.AppBarLayout
+  <com.smartnsoft.coordinatr.view.HeaderHalfBarLayout
     android:id="@+id/appBarLayout"
     android:layout_width="match_parent"
     android:layout_height="300dp"
@@ -18,7 +18,6 @@
       android:layout_width="match_parent"
       android:layout_height="?attr/actionBarSize"
       app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-      app:layout_scrollFlags="snap|scroll"
     />
 
     <ImageView
@@ -29,9 +28,8 @@
       android:fitsSystemWindows="true"
       android:src="@drawable/landscape"
       android:minHeight="100dp"
-      app:layout_scrollFlags="scroll|exitUntilCollapsed"
     />
-  </android.support.design.widget.AppBarLayout>
+  </com.smartnsoft.coordinatr.view.HeaderHalfBarLayout>
 
   <android.support.v4.widget.NestedScrollView
     android:id="@+id/nestedScrollView"
@@ -47,15 +45,6 @@
       android:padding="20dp"
     />
   </android.support.v4.widget.NestedScrollView>
-
-  <ImageView
-    android:id="@+id/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:src="@drawable/android"
-    app:layout_behavior="com.smartnsoft.coordinatr.behavior.CustomBehavior"
-  />
 
   <android.support.design.widget.FloatingActionButton
     android:id="@+id/floatingButton"

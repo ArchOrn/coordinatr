@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.smartnsoft.coordinatr.fragment.CustomFragment;
+import com.smartnsoft.coordinatr.fragment.SuperCustomFragment;
 import coordinatr.smartnsoft.com.coordinatr.R;
 
 public class MainActivity
@@ -18,7 +19,7 @@ public class MainActivity
     setContentView(R.layout.main_activity);
 
     final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    transaction.replace(R.id.fragmentContainer, new CustomFragment());
+    transaction.replace(R.id.fragmentContainer, new SuperCustomFragment());
     transaction.commit();
   }
 }
