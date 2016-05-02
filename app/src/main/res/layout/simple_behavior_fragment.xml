@@ -54,7 +54,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:src="@drawable/android"
-    app:layout_behavior="com.smartnsoft.coordinatr.behavior.CustomBehavior"
+    app:layout_behavior="com.smartnsoft.coordinatr.behavior.SimpleBehavior"
   />
 
   <android.support.design.widget.FloatingActionButton
