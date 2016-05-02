@@ -34,7 +34,7 @@ public class SimpleBehaviorFragment
     final View view = inflater.inflate(R.layout.simple_behavior_fragment, container, false);
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-    toolbar.setTitle(R.string.coordinatorCustom);
+    toolbar.setTitle(R.string.simpleTitle);
     final AppCompatActivity activity = (AppCompatActivity) getActivity();
     activity.setSupportActionBar(toolbar);
 

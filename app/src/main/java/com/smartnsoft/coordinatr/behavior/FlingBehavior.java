@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.ScrollerCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.widget.ImageView;
  * @author Raphael Kiffer
  * @since 2016.04.28
  */
-public class ScrollBehavior
+public class FlingBehavior
     extends AppBarLayout.Behavior
     implements AnimationListener
 {
@@ -69,6 +70,58 @@ public class ScrollBehavior
     }
   }
 
+  public static class FlingRunnable
+      implements Runnable
+  {
+
+    public static final int RUNNABLE_PERIOD = 2;
+
+    private final AnimationListener animationListener;
+
+    private final View child;
+
+    private final ImageView imageView;
+
+    private final int minHeight;
+
+    private final int maxHeight;
+
+    private final ScrollerCompat scroller;
+
+    public FlingRunnable(View child, ImageView imageView, int minHeight, int maxHeight, ScrollerCompat scroller,
+        AnimationListener animationListener)
+    {
+      this.child = child;
+      this.imageView = imageView;
+      this.minHeight = minHeight;
+      this.maxHeight = maxHeight;
+      this.scroller = scroller;
+      this.animationListener = animationListener;
+    }
+
+    public void run()
+    {
+      if (child != null && scroller != null && scroller.computeScrollOffset() == true)
+      {
+        // The fling is still ongoing, we can retrieve data to manipulate the view(s)
+        // scroller.getCurrX(); scroller.getCurrY(); scroller.getCurrVelocity();
+
+        // Do it while the fling is not yet finished
+        // scroller.computeScrollOffset() == false
+        child.postDelayed(this, FlingRunnable.RUNNABLE_PERIOD);
+      }
+      else if (child != null)
+      {
+        // The fling is finished, we can trigger an animation if we reach the top for example
+        if (child.getHeight() == minHeight)
+        {
+          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, animationListener);
+          child.startAnimation(toggleHeightColorAnimation);
+        }
+      }
+    }
+  }
+
   private static final int IMAGE_MINIMUM_HEIGHT = 200;
 
   private static final int ANIMATION_DURATION = 400;
@@ -85,12 +138,16 @@ public class ScrollBehavior
 
   private AtomicBoolean isAnimating;
 
-  public ScrollBehavior()
+  private ScrollerCompat scroller;
+
+  private Runnable flingRunnable;
+
+  public FlingBehavior()
   {
     isAnimating = new AtomicBoolean(false);
   }
 
-  public ScrollBehavior(Context context, AttributeSet attrs)
+  public FlingBehavior(Context context, AttributeSet attrs)
   {
     super(context, attrs);
 
@@ -108,7 +165,7 @@ public class ScrollBehavior
         if (childAt instanceof ImageView)
         {
           imageView = (ImageView) childAt;
-          imageView.setMinimumHeight(ScrollBehavior.IMAGE_MINIMUM_HEIGHT);
+          imageView.setMinimumHeight(FlingBehavior.IMAGE_MINIMUM_HEIGHT);
         }
 
         if (childAt instanceof Toolbar)
@@ -153,18 +210,64 @@ public class ScrollBehavior
     if (!isAnimating.get())
     {
       // Scroll down
-      if (dyConsumed >= ScrollBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == maxHeight)
+      if (dyConsumed >= FlingBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == maxHeight)
       {
-        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, false, ScrollBehavior.ANIMATION_DURATION, this);
+        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, false, FlingBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
-      // Scroll up
-      else if (dyConsumed <= -ScrollBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == minHeight)
+      // Scroll up only if the ScrollView (target) is on top, we use the dyUnconsumed for that purpose
+      else if (dyUnconsumed <= -FlingBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == minHeight)
       {
-        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, ScrollBehavior.ANIMATION_DURATION, this);
+        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
     }
+  }
+
+  @Override
+  public boolean onNestedFling(CoordinatorLayout coordinatorLayout, AppBarLayout child, View target, float velocityX,
+      float velocityY, boolean consumed)
+  {
+    final boolean result = super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed);
+
+    // Clear the old runnable if a new fling is triggered
+    if (flingRunnable != null)
+    {
+      child.removeCallbacks(flingRunnable);
+    }
+
+    // Only if flinging top
+    if (velocityY < 0)
+    {
+      if (scroller == null)
+      {
+        scroller = ScrollerCompat.create(child.getContext());
+      }
+
+      // Start the fling computation based on scroll data
+      scroller.fling(0, target.getScrollY(), (int) velocityX, (int) velocityY, 0, 0, 0, child.getTotalScrollRange());
+
+      // Fling just started
+      if (scroller.computeScrollOffset() == true)
+      {
+        flingRunnable = new FlingRunnable(child, imageView, minHeight, maxHeight, scroller, this);
+        child.post(flingRunnable);
+      }
+      // Fling is over
+      else
+      {
+        flingRunnable = null;
+
+        // The fling is finished, we can trigger an animation if we reach the top for example
+        if (child.getHeight() == minHeight)
+        {
+          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, this);
+          child.startAnimation(toggleHeightColorAnimation);
+        }
+      }
+    }
+
+    return result;
   }
 
   @Override

@@ -12,16 +12,16 @@ import com.smartnsoft.coordinatr.behavior.ScrollBehavior;
  * @since 2016.04.28
  */
 @CoordinatorLayout.DefaultBehavior(ScrollBehavior.class)
-public class HeaderHalfBarLayout
+public class ScrollLayout
     extends AppBarLayout
 {
 
-  public HeaderHalfBarLayout(Context context)
+  public ScrollLayout(Context context)
   {
     super(context);
   }
 
-  public HeaderHalfBarLayout(Context context, AttributeSet attrs)
+  public ScrollLayout(Context context, AttributeSet attrs)
   {
     super(context, attrs);
   }

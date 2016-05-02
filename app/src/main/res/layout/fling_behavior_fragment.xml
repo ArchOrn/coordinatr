@@ -12,6 +12,7 @@
     android:layout_height="wrap_content"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     android:fitsSystemWindows="true"
+    app:layout_behavior="com.smartnsoft.coordinatr.behavior.FlingBehavior"
   >
     <android.support.v7.widget.Toolbar
       android:id="@+id/toolbar"
