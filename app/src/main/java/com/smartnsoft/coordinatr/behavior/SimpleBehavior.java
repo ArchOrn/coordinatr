@@ -11,15 +11,15 @@ import android.widget.ImageView;
  * @author Raphael Kiffer
  * @since 2016.04.29
  */
-public class CustomBehavior
+public class SimpleBehavior
     extends CoordinatorLayout.Behavior<ImageView>
 {
 
-  public CustomBehavior()
+  public SimpleBehavior()
   {
   }
 
-  public CustomBehavior(Context context, AttributeSet attrs)
+  public SimpleBehavior(Context context, AttributeSet attrs)
   {
     super(context, attrs);
   }

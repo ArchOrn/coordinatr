@@ -1,7 +1,6 @@
 package com.smartnsoft.coordinatr.fragment;
 
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,7 +18,7 @@ import coordinatr.smartnsoft.com.coordinatr.R;
  * @author Raphael Kiffer
  * @since 2015.12.24
  */
-public class CustomFragment
+public class SimpleBehaviorFragment
     extends Fragment
 {
 
@@ -32,7 +31,7 @@ public class CustomFragment
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
   {
-    final View view = inflater.inflate(R.layout.custom_fragment, container, false);
+    final View view = inflater.inflate(R.layout.simple_behavior_fragment, container, false);
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.coordinatorCustom);
@@ -49,7 +48,7 @@ public class CustomFragment
       public void onClick(View view)
       {
         final FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainer, new SuperCustomFragment());
+        transaction.replace(R.id.fragmentContainer, new ScrollBehaviorFragment());
         transaction.commit();
       }
     });
