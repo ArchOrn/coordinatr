@@ -3,9 +3,9 @@ package com.smartnsoft.coordinatr.behavior;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
@@ -32,22 +32,19 @@ public class HeaderHalfBarBehavior
 
     private final View view;
 
+    private final ImageView imageView;
+
     private final int minHeight;
 
     private final int maxHeight;
 
     private final boolean expand;
 
-    public ToggleHeightColorAnimation(View view, int maxHeight, boolean expand, int duration,
-        AnimationListener animationListener)
-    {
-      this(view, 0, maxHeight, expand, duration, animationListener);
-    }
-
-    public ToggleHeightColorAnimation(View view, int minHeight, int maxHeight, boolean expand, int duration,
-        AnimationListener animationListener)
+    public ToggleHeightColorAnimation(View view, ImageView imageView, int minHeight, int maxHeight, boolean expand,
+        int duration, AnimationListener animationListener)
     {
       this.view = view;
+      this.imageView = imageView;
       this.minHeight = minHeight;
       this.maxHeight = maxHeight;
       this.expand = expand;
@@ -61,17 +58,16 @@ public class HeaderHalfBarBehavior
     protected void applyTransformation(float interpolatedTime, Transformation transformation)
     {
       final ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-      layoutParams.height = (int) (expand == true ? (interpolatedTime == 1 ? ViewGroup.LayoutParams.WRAP_CONTENT : minHeight + maxHeight * interpolatedTime) : maxHeight - ((maxHeight - minHeight) * interpolatedTime));
+      layoutParams.height = (int) (expand == true ? (interpolatedTime == 1 ? ViewGroup.LayoutParams.WRAP_CONTENT : minHeight + (maxHeight - minHeight) * interpolatedTime) : maxHeight - ((maxHeight - minHeight) * interpolatedTime));
       view.setLayoutParams(layoutParams);
+      imageView.setAlpha(expand == true ? interpolatedTime : 1.f - interpolatedTime);
     }
-
 
     @Override
     public boolean willChangeBounds()
     {
       return true;
     }
-
   }
 
   private static final int IMAGE_MINIMUM_HEIGHT = 200;
@@ -85,6 +81,8 @@ public class HeaderHalfBarBehavior
   private ImageView imageView;
 
   private int maxHeight;
+
+  private int minHeight;
 
   private AtomicBoolean isAnimating;
 
@@ -121,6 +119,16 @@ public class HeaderHalfBarBehavior
       }
     }
 
+    if (maxHeight == 0)
+    {
+      maxHeight = child.getHeight();
+    }
+
+    if (minHeight == 0 && toolbar != null)
+    {
+      minHeight = toolbar.getHeight();
+    }
+
     return false;
   }
 
@@ -143,32 +151,21 @@ public class HeaderHalfBarBehavior
   {
     super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 
-    final CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
-
-    if (maxHeight == 0)
-    {
-      maxHeight = child.getHeight();
-      layoutParams.height = child.getHeight();
-    }
-
     if (!isAnimating.get())
     {
-      if (dyConsumed >= HeaderHalfBarBehavior.MINIMUM_SCROLL_DELTA && (layoutParams.height > HeaderHalfBarBehavior.IMAGE_MINIMUM_HEIGHT + toolbar.getHeight() || layoutParams.height == LayoutParams.WRAP_CONTENT))
+      if (dyConsumed >= HeaderHalfBarBehavior.MINIMUM_SCROLL_DELTA && child.getHeight() == maxHeight)
       {
-        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, toolbar.getHeight(), maxHeight, false, HeaderHalfBarBehavior.ANIMATION_DURATION, this);
+        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, toolbar.getHeight(), maxHeight, false, HeaderHalfBarBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
-      else if (dyConsumed <= HeaderHalfBarBehavior.MINIMUM_SCROLL_DELTA && layoutParams.height < maxHeight + toolbar.getHeight() && layoutParams.height != LayoutParams.WRAP_CONTENT)
+      else if (dyConsumed <= -HeaderHalfBarBehavior.MINIMUM_SCROLL_DELTA && child.getHeight() == toolbar.getHeight())
       {
-        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, toolbar.getHeight(), maxHeight, true, HeaderHalfBarBehavior.ANIMATION_DURATION, this);
+        final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, toolbar.getHeight(), maxHeight, true, HeaderHalfBarBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
     }
 
-    // TODO: Add color change
     // TODO: Add fling
-
-    child.setLayoutParams(layoutParams);
   }
 
   @Override
