@@ -114,8 +114,7 @@ public class FlingBehavior
         // Fling is over, trigger the maximize animation cause we reached the top
         if (child.getHeight() == minHeight)
         {
-          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight,
-              maxHeight, true, FlingBehavior.ANIMATION_DURATION, animationListener);
+          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, animationListener);
           child.startAnimation(toggleHeightColorAnimation);
         }
       }
@@ -250,7 +249,7 @@ public class FlingBehavior
       scroller.fling(0, target.getScrollY(), (int) velocityX, (int) velocityY, 0, 0, 0, child.getTotalScrollRange());
 
       // Fling just started
-      if (scroller.computeScrollOffset() == true)
+      if (scroller.computeScrollOffset())
       {
         flingRunnable = new FlingRunnable(child, imageView, minHeight, maxHeight, scroller, this);
         child.post(flingRunnable);
