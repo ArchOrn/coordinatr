@@ -135,6 +135,7 @@ public class ScrollBehavior
   public boolean onStartNestedScroll(CoordinatorLayout parent, AppBarLayout child, View directTargetChild, View target,
       int nestedScrollAxes)
   {
+    // Allow only the vertical scroll events to be tracked
     return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
   }
 
@@ -150,15 +151,16 @@ public class ScrollBehavior
   {
     super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 
+    // Check if an animation is not already ongoing
     if (!isAnimating.get())
     {
-      // Scroll down
+      // Minimize on scroll down if the child height is at maximum value
       if (dyConsumed >= ScrollBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == maxHeight)
       {
         final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, false, ScrollBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
-      // Scroll up
+      // Maximize on scroll up if the child height is at minimum value
       else if (dyConsumed <= -ScrollBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == minHeight)
       {
         final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, ScrollBehavior.ANIMATION_DURATION, this);

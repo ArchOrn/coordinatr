@@ -101,21 +101,21 @@ public class FlingBehavior
 
     public void run()
     {
-      if (child != null && scroller != null && scroller.computeScrollOffset() == true)
+      if (child != null && scroller != null && scroller.computeScrollOffset())
       {
-        // The fling is still ongoing, we can retrieve data to manipulate the view(s)
+        // Fling is still ongoing, we can retrieve data to manipulate the view(s)
         // scroller.getCurrX(); scroller.getCurrY(); scroller.getCurrVelocity();
 
-        // Do it while the fling is not yet finished
-        // scroller.computeScrollOffset() == false
+        // Repeat while the fling is not yet finished : scroller.computeScrollOffset()
         child.postDelayed(this, FlingRunnable.RUNNABLE_PERIOD);
       }
-      else if (child != null)
+      else if (child != null && !scroller.computeScrollOffset())
       {
-        // The fling is finished, we can trigger an animation if we reach the top for example
+        // Fling is over, trigger the maximize animation cause we reached the top
         if (child.getHeight() == minHeight)
         {
-          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, animationListener);
+          final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight,
+              maxHeight, true, FlingBehavior.ANIMATION_DURATION, animationListener);
           child.startAnimation(toggleHeightColorAnimation);
         }
       }
@@ -192,6 +192,7 @@ public class FlingBehavior
   public boolean onStartNestedScroll(CoordinatorLayout parent, AppBarLayout child, View directTargetChild, View target,
       int nestedScrollAxes)
   {
+    // Allow only the vertical scroll events to be tracked
     return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
   }
 
@@ -207,15 +208,16 @@ public class FlingBehavior
   {
     super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 
+    // Check if an animation is not already ongoing
     if (!isAnimating.get())
     {
-      // Scroll down
+      // Minimize on scroll down if the child height is at maximum value
       if (dyConsumed >= FlingBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == maxHeight)
       {
         final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, false, FlingBehavior.ANIMATION_DURATION, this);
         child.startAnimation(toggleHeightColorAnimation);
       }
-      // Scroll up only if the ScrollView (target) is on top, we use the dyUnconsumed for that purpose
+      // Maximize on scroll up if the child height is at minimum value and the ScrollView (target) is on start position : we use the dyUnconsumed for that purpose
       else if (dyUnconsumed <= -FlingBehavior.MINIMUM_SCROLL_OFFSET && child.getHeight() == minHeight)
       {
         final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, this);
@@ -236,7 +238,7 @@ public class FlingBehavior
       child.removeCallbacks(flingRunnable);
     }
 
-    // Only if flinging top
+    // React only to top fling
     if (velocityY < 0)
     {
       if (scroller == null)
@@ -258,7 +260,7 @@ public class FlingBehavior
       {
         flingRunnable = null;
 
-        // The fling is finished, we can trigger an animation if we reach the top for example
+        // Trigger the maximize animation cause we reached the top
         if (child.getHeight() == minHeight)
         {
           final ToggleHeightColorAnimation toggleHeightColorAnimation = new ToggleHeightColorAnimation(child, imageView, minHeight, maxHeight, true, FlingBehavior.ANIMATION_DURATION, this);
