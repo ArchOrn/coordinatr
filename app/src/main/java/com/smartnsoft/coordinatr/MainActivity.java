@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.smartnsoft.coordinatr.fragment.DefaultFragment;
-import com.smartnsoft.coordinatr.fragment.ScrollBehaviorFragment;
 import coordinatr.smartnsoft.com.coordinatr.R;
 
 public class MainActivity
