@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <group android:checkableBehavior="single">
+    <item
+      android:id="@+id/defaultCase"
+      android:checked="false"
+      android:icon="@drawable/ic_flip"
+      android:title="@string/defaultTitle"
+    />
+
+    <item
+      android:id="@+id/simpleCase"
+      android:checked="false"
+      android:icon="@drawable/ic_flip"
+      android:title="@string/simpleTitle"
+    />
+
+    <item
+      android:id="@+id/scrollCase"
+      android:checked="false"
+      android:icon="@drawable/ic_flip"
+      android:title="@string/scrollTitle"
+    />
+
+    <item
+      android:id="@+id/flingCase"
+      android:checked="false"
+      android:icon="@drawable/ic_flip"
+      android:title="@string/flingTitle"
+    />
+
+    <item
+      android:id="@+id/viewPagerCase"
+      android:checked="false"
+      android:icon="@drawable/ic_flip"
+      android:title="@string/viewPagerTitle"
+    />
+  </group>
+</menu>

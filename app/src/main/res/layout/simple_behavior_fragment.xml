@@ -56,13 +56,4 @@
     android:src="@drawable/android"
     app:layout_behavior="com.smartnsoft.coordinatr.behavior.SimpleBehavior"
   />
-
-  <android.support.design.widget.FloatingActionButton
-    android:id="@+id/floatingButton"
-    android:layout_width="56dp"
-    android:layout_height="56dp"
-    android:layout_gravity="end|bottom"
-    android:layout_margin="16dp"
-    android:src="@drawable/ic_autorenew"
-  />
 </android.support.design.widget.CoordinatorLayout>
